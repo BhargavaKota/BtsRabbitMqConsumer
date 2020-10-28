@@ -1,8 +1,13 @@
-<bindingExtensions>
-        <add name="RabbitMQBinding" type="CoreCode.RabbitMQ.ServiceModel.RabbitMQBindingSection, CoreCode.RabbitMQ.ServiceModel, Version=0.0.0.0, Culture=neutral,   PublicKeyToken=97eec3e034630b97" />
-        <add name="RabbitMQBindingV2" type="CoreCode.RabbitMQ.ServiceModel.RabbitMQBindingSection, CoreCode.RabbitMQ.ServiceModel, Version=2.0.0.0, Culture=neutral,   PublicKeyToken=97eec3e034630b97" />
-		
-		
-<add name="RabbitMQBinding" type="CoreCode.CoreCode.ServiceModel.RabbitMQBindingSection, CoreCode.RabbitMQ.ServiceModel, Version=0.0.0.0, Culture=neutral,   PublicKeyToken=97eec3e034630b97"/>
-<add name="RabbitMQBindingV2" type="Parallon.CoreCode.ServiceModel.RabbitMQBindingSection, CoreCode.RabbitMQ.ServiceModel, Version=2.0.0.0, Culture=neutral,   PublicKeyToken=97eec3e034630b97"/>
-</bindingExtensions>
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <enterpriseLibrary.ConfigurationSource selectedSource="ESB File Configuration Source" />
+  <system.serviceModel>
+    <behaviors>
+    </behaviors>
+    <extensions>
+      <bindingExtensions>
+             <add name="RabbitMQBinding" type="CoreCode.RabbitMQ.ServiceModel.RabbitMQBindingSection, CoreCode.RabbitMQ.ServiceModel, Version=0.0.0.0, Culture=neutral,   PublicKeyToken=97eec3e034630b97" />
+      </bindingExtensions>
+    </extensions>
+  </system.serviceModel>
+</configuration>
