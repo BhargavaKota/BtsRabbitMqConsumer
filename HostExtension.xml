@@ -1,0 +1,8 @@
+<bindingExtensions>
+        <add name="RabbitMQBinding" type="CoreCode.RabbitMQ.ServiceModel.RabbitMQBindingSection, CoreCode.RabbitMQ.ServiceModel, Version=0.0.0.0, Culture=neutral,   PublicKeyToken=97eec3e034630b97" />
+        <add name="RabbitMQBindingV2" type="CoreCode.RabbitMQ.ServiceModel.RabbitMQBindingSection, CoreCode.RabbitMQ.ServiceModel, Version=2.0.0.0, Culture=neutral,   PublicKeyToken=97eec3e034630b97" />
+		
+		
+<add name="RabbitMQBinding" type="Parallon.RabbitMQ.ServiceModel.RabbitMQBindingSection, Parallon.RabbitMQ.ServiceModel, Version=0.0.0.0, Culture=neutral,   PublicKeyToken=47eec3e034630b97"/>
+<add name="RabbitMQBindingV2" type="Parallon.RabbitMQ.ServiceModel.RabbitMQBindingSection, Parallon.RabbitMQ.ServiceModel, Version=2.0.0.0, Culture=neutral,   PublicKeyToken=47eec3e034630b97"/>
+</bindingExtensions>
