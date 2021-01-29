@@ -1,0 +1,115 @@
+USE [CBS_DB]
+GO
+
+/****** Object:  Table [dbo].[cbs_Logs]    Script Date: 1/29/2021 11:33:47 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[cbs_Logs](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Message] [nvarchar](max) NULL,
+	[Level] [nvarchar](128) NULL,
+	[TimeStamp] [datetime] NOT NULL,
+	[Exception] [nvarchar](max) NULL,
+	[ApplicationId] [nvarchar](40) NULL,
+	[CorrelationId] [nvarchar](40) NULL,
+	[PatientAcctNbr] [nvarchar](20) NULL,
+	[UnitNbr] [nvarchar](5) NULL,
+	[DataKey] [nvarchar](50) NULL,
+	[DataValue] [nvarchar](max) NULL,
+	[ParsedStatus] [varchar](1) NULL,
+ CONSTRAINT [PK_Logs] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+
+
+  private ColumnOptions colOpts = new ColumnOptions()
+        {
+            AdditionalColumns = new List<SqlColumn>(){
+                new SqlColumn (){ColumnName = "CorrelationId",DataType = SqlDbType.NVarChar, DataLength = 40},
+                new SqlColumn (){ColumnName = "ApplicationId",DataType = SqlDbType.NVarChar, DataLength = 40},
+                new SqlColumn (){ColumnName = "PatientAcctNbr",DataType = SqlDbType.NVarChar, DataLength = 20},
+                new SqlColumn (){ColumnName = "UnitNbr",DataType = SqlDbType.NVarChar, DataLength = 5},
+                new SqlColumn (){ColumnName = "DataKey",DataType = SqlDbType.NVarChar, DataLength = 50},
+                new SqlColumn (){ColumnName = "DataValue",DataType = SqlDbType.NVarChar, DataLength = -1}
+            }
+        };
+
+
+colOpts.Properties.PropertiesFilter = (propName) => (propName == "CorrelationId");
+            colOpts.Store.Remove(StandardColumn.Properties);
+            colOpts.Store.Remove(StandardColumn.MessageTemplate);
+            var canTrackToSQLDb = Configuration["global:enableSQLDbTracking"];
+
+
+ if (string.IsNullOrWhiteSpace(canTrackToSQLDb))
+            {
+                Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .Enrich.FromLogContext()
+                .CreateLogger();
+            }
+            else
+                if (canTrackToSQLDb.ToUpperInvariant() == "TRUE")
+                Log.Logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(Configuration)
+                    .Enrich.FromLogContext()
+                    .Enrich.WithProperty("ApplicationId", "BenefitsPbWorkflow")
+                    .WriteTo.Logger(dbLog => dbLog
+                        .Filter.ByIncludingOnly(Matching.WithProperty<string>("PatientAcctNbr", p => (!string.IsNullOrEmpty(p))))
+                        .Filter.ByExcluding(excludeExpression)
+                        .AuditTo.MSSqlServer(
+                            connectionString: logDbConnString,
+                            tableName: "cbs_logs",
+                            columnOptions: colOpts,
+                            autoCreateSqlTable: false
+                            ))
+                        .CreateLogger();
+
+ app.UseSerilogRequestLogging();
+
+
+
+
+ "Logging": {
+      "IncludeScopes": true,
+      "Debug": {
+        "LogLevel": {
+          "Default": "Warning"
+        }
+      },
+      "Console": {
+        "LogLevel": {
+          "Default": "Info"
+        }
+      }
+    },
+ 
+    "Serilog": {
+      "MinimumLevel": {
+        "Default": "Debug",
+        "Override": {
+          "System": "Information",
+          "Microsoft": "Information",
+          "Couchbase": "Information"
+        }
+      },
+      "WriteTo": [
+        {
+          "Name": "Console",
+          "Args": {
+            "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {CorrelationId} {Message:lj} {NewLine}{Exception}"
+          }
+        }
+      ],
+      "Enrich": [ "FromLogContext" ]
+    
+    }
